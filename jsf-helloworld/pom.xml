@@ -68,10 +68,22 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.joinfaces</groupId>
+            <artifactId>security-spring-boot-starter</artifactId>
+        </dependency>
+
         <!-- JoinFaces + MyFaces 4 integration -->
+        <!--
         <dependency>
             <groupId>org.joinfaces</groupId>
             <artifactId>myfaces4-spring-boot-starter</artifactId>
+        </dependency>
+        -->
+        <!-- JoinFaces + PrimeFaces 16 integration -->
+        <dependency>
+            <groupId>org.joinfaces</groupId>
+            <artifactId>primefaces-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
 

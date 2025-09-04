@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:h="https://jakarta.ee/xml/ns/jakartaee/jsf/html">
+<html xmlns="https://jakarta.ee/xml/ns/jakartaee"
+      xmlns:h="jakarta.faces.html">
 <h:head>
     <title>Page 2</title>
 </h:head>
 <h:body>
     <h1>Page 2</h1>
     <p>You entered:
-        <h:outputText value="#{helloWorld.message}" />
+        <h:outputText value="#{helloWorld.message}"/>
     </p>
     <h:form>
-        <h:commandButton value="Back to Page 1" action="index.xhtml?faces-redirect=true" />
+        <h:commandButton value="Back to Page 1" action="index.xhtml?faces-redirect=true"/>
     </h:form>
 </h:body>
 </html>
