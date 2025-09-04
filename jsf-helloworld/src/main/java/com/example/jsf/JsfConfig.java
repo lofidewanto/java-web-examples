@@ -1,16 +1,19 @@
 package com.example.jsf;
 
+import org.apache.myfaces.webapp.StartupServletContextListener;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextListener;
 
 import jakarta.faces.webapp.FacesServlet;
+import jakarta.servlet.ServletContextListener;
 
 @Configuration
 public class JsfConfig {
-   
+
     /**
      * Register the JSF FacesServlet for handling *.xhtml requests.
      * Set load-on-startup to ensure JSF initializes early.
@@ -46,5 +49,10 @@ public class JsfConfig {
     @Bean
     public RequestContextListener requestContextListener() {
         return new RequestContextListener();
+    }
+
+    @Bean
+    public ServletListenerRegistrationBean<ServletContextListener> myfacesStartupListener() {
+        return new ServletListenerRegistrationBean<>(new StartupServletContextListener());
     }
 }
