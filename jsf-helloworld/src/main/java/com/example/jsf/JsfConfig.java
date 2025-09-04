@@ -1,44 +1,50 @@
 package com.example.jsf;
 
-import org.apache.myfaces.webapp.MyFacesContainerInitializer;
-import org.apache.myfaces.webapp.StartupServletContextListener;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.request.RequestContextListener;
 
-import jakarta.faces.application.ProjectStage;
-import jakarta.faces.component.UIInput;
-import jakarta.servlet.ServletContainerInitializer;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletContextListener;
-import jakarta.servlet.ServletException;
+import jakarta.faces.webapp.FacesServlet;
 
 @Configuration
 public class JsfConfig {
+   
+    /**
+     * Register the JSF FacesServlet for handling *.xhtml requests.
+     * Set load-on-startup to ensure JSF initializes early.
+     */
     @Bean
-    public ServletContextInitializer jsfServletContextInitializer() {
-        return new ServletContextInitializer() {
-            @Override
-            public void onStartup(ServletContext context) throws ServletException {
-                // Optional JSF init params
-                context.setInitParameter(UIInput.EMPTY_STRING_AS_NULL_PARAM_NAME,
-                        Boolean.TRUE.toString());
-                context.setInitParameter(ProjectStage.PROJECT_STAGE_PARAM_NAME,
-                        ProjectStage.Development.name());
+    public ServletRegistrationBean<FacesServlet> facesServletRegistration() {
+        ServletRegistrationBean<FacesServlet> registration = new ServletRegistrationBean<>(new FacesServlet(),
+                "*.xhtml");
+        registration.setLoadOnStartup(1);
+        return registration;
+    }
 
-                // Start MyFaces (FacesServlet) container
-                ServletContainerInitializer myFacesInit = new MyFacesContainerInitializer();
-                myFacesInit.onStartup(null, context);
-            }
+    /**
+     * Set JSF context parameters. The critical one is forceLoadConfiguration=true
+     * to load JSF config without web.xml:contentReference[oaicite:1]{index=1}. We
+     * also skip facelets comments.
+     */
+    @Bean
+    public ServletContextInitializer servletContextInitializer() {
+        return servletContext -> {
+            servletContext.setInitParameter(
+                    "com.sun.faces.forceLoadConfiguration", Boolean.TRUE.toString());
+            servletContext.setInitParameter(
+                    "jakarta.faces.FACELETS_SKIP_COMMENTS", "true");
         };
     }
 
+    /**
+     * To use Spring-managed session/request-scoped beans outside of Spring MVC,
+     * register the RequestContextListener. This allows @SessionScope to
+     * work:contentReference[oaicite:2]{index=2}.
+     */
     @Bean
-    public ServletListenerRegistrationBean<ServletContextListener> facesStartupListener() {
-        // Register the MyFaces StartupServletContextListener
-        ServletListenerRegistrationBean<ServletContextListener> bean = new ServletListenerRegistrationBean<>();
-        bean.setListener(new StartupServletContextListener());
-        return bean;
+    public RequestContextListener requestContextListener() {
+        return new RequestContextListener();
     }
 }
